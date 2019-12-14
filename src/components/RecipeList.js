@@ -1,22 +1,32 @@
-  
 import React from 'react'
 import Recipe from './Recipe'
 
-export default function RecipeList({ recipes }) {
+export default function RecipeList(props) {
+  const {
+    recipes,
+    handleRecipeAdd,
+    handleRecipeDelete
+  } = props
   return (
     <div className="recipe-list">
-    {/*Each time you loop over an array and create components, make 
-    sure they have a unique key. If not react will complain as it needs
-    to know which component to update*/}
       <div>
         {recipes.map(recipe => {
           return (
-            <Recipe key={recipe.id} {...recipe} />
+            <Recipe
+              key={recipe.id}
+              handleRecipeDelete={handleRecipeDelete}
+              {...recipe}
+            />
           )
         })}
       </div>
       <div className="recipe-list__add-recipe-btn-container">
-        <button className="btn btn--primary">Add Recipe</button>
+        <button
+          className="btn btn--primary"
+          onClick={handleRecipeAdd}
+        >
+          Add Recipe
+        </button>
       </div>
     </div>
   )
