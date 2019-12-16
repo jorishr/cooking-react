@@ -1,8 +1,21 @@
-import React from 'react'
+import React, { useContext }from 'react'
 import RecipeIngredientEdit from './RecipeIngredientEdit'
+import { RecipeContext } from './App'
 
 export default function RecipeEdit({ recipe }) {
-  return (
+   const { handleRecipeChange } = useContext(RecipeContext)
+   //helper function to handle the exact changes that come from the inputs
+   function handleChange(changes){
+        handleRecipeChange(recipe.id, { ...recipe, ...changes})
+   }
+   //helper function to handle the changes in ingredients, similar to handleRecipeChange
+   function handleIngredientChange(id, updatedIngredient){
+        const newIngredients  = [...recipe.ingredients]
+        const index       = newIngredients.findIndex(i => i.id === id) 
+        newIngredients[index] = updatedIngredient
+        handleChange({ ingredients: newIngredients})
+   }
+   return (
     <div className="recipe-edit">
       <div className="recipe-edit__remove-button-container">
         <button className="btn recipe-edit__remove-button">&times;</button>
@@ -12,27 +25,32 @@ export default function RecipeEdit({ recipe }) {
                 className="recipe-edit__label">Name
         </label>
         <input  type="text" name="name" id="name"
-                value={recipe.name} 
+                //placeholder={recipe.name}
+                defaultValue={recipe.name} 
+                onInput={(e) => handleChange({ name: e.target.value })}
                 className="recipe-edit__input" />
         <label  htmlFor="cookTime" 
                 className="recipe-edit__label">Cook Time
         </label>
         <input  type="text" name="cookTime" id="cookTime"
                 className="recipe-edit__input"
-                value={recipe.cookTime}  />
+                defaultValue={recipe.cookTime}
+                onInput={(e) => handleChange({ cookTime: e.target.value })}  />
         <label  htmlFor="servings"  
                 className="recipe-edit__label">Servings
         </label>
         <input  type="number" min="1" name="servings" id="servings"
-                value={recipe.servings} 
+                defaultValue={recipe.servings} 
+                onInput={(e) => handleChange({ servings: parseInt(e.target.value) || '' })}
                 className="recipe-edit__input" />
         <label  htmlFor="instructions" 
                 className="recipe-edit__label">Instructions
         </label>
         <textarea name="instructions"
-                value={recipe.instructions}
+                defaultValue={recipe.instructions}
+                onInput={(e) => handleChange({ instructions: e.target.value })}
                 className="recipe-edit__input"
-                id="instructions"></textarea>
+                id="instructions" />
       </div>
       <br />
       <label className="recipe-edit__label">Ingredients</label>
@@ -42,7 +60,10 @@ export default function RecipeEdit({ recipe }) {
         <div></div>
         {/*map over the arr of ingredients and for each ingr create component*/}
         {recipe.ingredients.map(ingredient => 
-                <RecipeIngredientEdit key={ingredient.id} ingredient={ingredient}/>
+                <RecipeIngredientEdit 
+                        key={ingredient.id} 
+                        ingredient={ingredient}
+                        handleIngredientChange={handleIngredientChange}/>
         )}
       </div>
       <div className="recipe-edit__add-ingredient-btn-container">

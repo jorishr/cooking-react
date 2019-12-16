@@ -15,9 +15,7 @@ function App() {
   //the selectedRecipe is either undefined or the one with an id corresponding 
   //to the one selected by the user (by clickning edit, see Recipe.js)
   const selectedRecipe = recipes.find(recipe => recipe.id === selectedRecipeId)
-  //context api
-  const recipeContextVal = { handleRecipeAdd, handleRecipeDelete, handleRecipeSelect }
-
+  
   useEffect(() => {
     const recipesJSON = localStorage.getItem(LOCAL_STORAGE_KEY)
     if(recipesJSON != null) {setRecipes(JSON.parse(recipesJSON))} 
@@ -27,6 +25,9 @@ function App() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recipes))
   }, [recipes])
 
+  //context api value
+  const recipeContextVal = { handleRecipeAdd, handleRecipeDelete, handleRecipeSelect, handleRecipeChange }
+  
   function handleRecipeSelect(id) { 
     setSelectedRecipeId(id)
   }
@@ -48,6 +49,13 @@ function App() {
 
   function handleRecipeDelete(id) {
     setRecipes(recipes.filter(recipe => recipe.id !== id))
+  }
+
+  function handleRecipeChange(id, updatedRecipe){
+    const newRecipes  = [...recipes]
+    const index       = newRecipes.findIndex(r => r.id === id) 
+    newRecipes[index] = updatedRecipe
+    setRecipes(newRecipes)
   }
 
   return (
