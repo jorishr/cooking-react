@@ -15,7 +15,6 @@ function App() {
   //the selectedRecipe is either undefined or the one with an id corresponding 
   //to the one selected by the user (by clickning edit, see Recipe.js)
   const selectedRecipe = recipes.find(recipe => recipe.id === selectedRecipeId)
-  
   useEffect(() => {
     const recipesJSON = localStorage.getItem(LOCAL_STORAGE_KEY)
     if(recipesJSON != null) {setRecipes(JSON.parse(recipesJSON))} 
