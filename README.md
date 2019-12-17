@@ -1,3 +1,13 @@
+- Cooking With React App
+Web app with basic functionality to search/add/edit/remove recipes. LocalStorage is used to store the modifications you make. 
+
+- Credits
+Building this app was part of the online course Learn React Today by Kyle Cook at webdevsimplified.com
+
+The search functionality was not part of the online course.
+
+## React-info
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
