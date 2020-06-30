@@ -1,18 +1,28 @@
 import React, { useContext, useState } from 'react'
 import Recipe from './Recipe'
 import { RecipeContext } from './App'
-
+/**
+ * - Render recipe list (prop received from App.js)
+ * - List consists of multiple Recipe components
+ * - Search function conditions which items are shown
+ * - User input triggers search state changes
+ */
 export default function RecipeList(props) {
   const { handleRecipeAdd } = useContext(RecipeContext)
-  const { recipes } = props
+  const { recipeList } = props
+  //search state
   const [searchText, setSearchText] = useState()
-  
+
   function handleRecipeSearch(usrInput){
     setSearchText(usrInput)
   }
 
-  const filteredRecipes = searchText != null ? recipes.filter(r => r.name.toLowerCase().includes(searchText)) : recipes
-  return (
+  const filteredRecipes = 
+    searchText != null ? 
+    recipeList.filter(r => r.name.toLowerCase().includes(searchText))
+    : recipeList
+
+    return (
     <div className="recipe-list">
       <div className="search-box__container">
         <label htmlFor="search">Search a recipe</label>
@@ -37,4 +47,3 @@ export default function RecipeList(props) {
     </div>
   )
 }
-

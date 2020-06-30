@@ -2,21 +2,24 @@ import React, { useContext }from 'react'
 import RecipeIngredientEdit from './RecipeIngredientEdit'
 import { RecipeContext } from './App'
 import uuidv4 from 'uuid/v4'
-
+/**
+ * - Render the recipe edit forms with current data
+ * - Render the ingredient forms and pass relevant props
+ * - handler functions to manage: 
+ *      -- input changes to recipe
+ *      -- input changes to ingredients
+ */
 export default function RecipeEdit({ recipe }) {
    const { handleRecipeChange, handleRecipeSelect } = useContext(RecipeContext)
-   //helper function to handle the exact changes that come from the inputs
    function handleChange(changes){
         handleRecipeChange(recipe.id, { ...recipe, ...changes})
    }
-   //helper function to handle the changes in ingredients, similar to handleRecipeChange
    function handleIngredientChange(id, updatedIngredient){
         const newIngredients  = [...recipe.ingredients]
-        const index       = newIngredients.findIndex(i => i.id === id) 
+        const index = newIngredients.findIndex(i => i.id === id) 
         newIngredients[index] = updatedIngredient
-        handleChange({ ingredients: newIngredients})
+        handleChange({ ingredients: newIngredients })
    }
-   //handle 'ingredient add' button
    function handleIngredientAdd() {
         const newIngredient = {
           id: uuidv4(),

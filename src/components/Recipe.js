@@ -1,7 +1,11 @@
 import React, { useContext } from 'react'
 import IngredientList from './IngredientList'
 import { RecipeContext } from './App'
-
+/**
+ * - Render the recipe
+ * - Buttons trigger respective handler functions
+ * - Render ingredients section with ingredient prop data
+ */
 export default function Recipe(props) {
   const { handleRecipeDelete, handleRecipeSelect } = useContext(RecipeContext)
   const { id, name, cookTime, servings, instructions, ingredients } = props
@@ -33,7 +37,6 @@ export default function Recipe(props) {
       <div className="recipe__row">
         <span className="recipe__label">Ingredients:</span>
         <div className="recipe__value recipe__value--indented">
-          {/* render the ingredientList component with the values from the prop ingedrients */}
           <IngredientList ingredients={ingredients} />
         </div>
       </div>

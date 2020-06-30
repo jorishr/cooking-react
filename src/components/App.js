@@ -3,35 +3,68 @@ import RecipeList from './RecipeList'
 import '../css/app.css'
 import uuidv4 from 'uuid/v4'
 import RecipeEdit from './RecipeEdit';
+import { defaultRecipes } from './default_samples';
 
 export const RecipeContext = React.createContext();
 const LOCAL_STORAGE_KEY = 'react-cooking.recipes'
 
+/**
+ * #############
+ * State & props
+ * #############
+ * - state for editing: only id is required, it has no default state
+ * - default state for list of recipes is the imported defaultRecipes array 
+ * - store the selectedRecipe in a variable that is passed as a prop to the
+ * recipeEdit component
+ */
 function App() {
-  //state for editing: only id is required, it has no default state
+  //states
   const [selectedRecipeId, setSelectedRecipeId] = useState();
-  //default state for recipes(list) is the sampleRecipes arr defined below
-  const [recipes, setRecipes] = useState(sampleRecipes)
-  //the selectedRecipe is either undefined or the one with an id corresponding 
-  //to the one selected by the user (by clickning edit, see Recipe.js)
-  const selectedRecipe = recipes.find(recipe => recipe.id === selectedRecipeId)
+  const [recipeList, setRecipeList] = useState(defaultRecipes)
+  const selectedRecipe = recipeList.find(recipe => recipe.id === selectedRecipeId)
+  //effect hooks to get and set local storage data
   useEffect(() => {
     const recipesJSON = localStorage.getItem(LOCAL_STORAGE_KEY)
-    if(recipesJSON != null) {setRecipes(JSON.parse(recipesJSON))} 
+    if(recipesJSON != null) {setRecipeList(JSON.parse(recipesJSON))} 
   }, [])
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recipes))
-  }, [recipes])
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recipeList))
+  }, [recipeList])
+  //context api object to pass handler functions
+  const recipeContextVal = { 
+    handleRecipeAdd, 
+    handleRecipeDelete, 
+    handleRecipeSelect, 
+    handleRecipeChange 
+  }
+  /*
+  #################
+  Handler functions
+  #################
+  - select recipe
+  - add recipe
+  - edit recipe
+  - delete recipe
 
-  //context api value
-  const recipeContextVal = { handleRecipeAdd, handleRecipeDelete, handleRecipeSelect, handleRecipeChange }
-  
+  #############
+  Select recipe
+  #############
+  - default state is undefined, none selected
+  */
   function handleRecipeSelect(id) { 
     setSelectedRecipeId(id)
   }
-
+  /* 
+  ##########
+  Add recipe
+  ##########
+  - Display the newRecipe default values in the edit screen upon 
+  'add recipe' btn click. 
+  - Adding a recipe is to set a new state: old arr (spreaded out default 
+  values), plus the newRecipe values added by user.*/
   function handleRecipeAdd() {
+    //default values
     const newRecipe = {
       id: uuidv4(),
       name: '',
@@ -42,74 +75,44 @@ function App() {
         { id: uuidv4(), name: '', amount: '' }
       ]
     }
-    //display the newRecipe default values in the edit screen upon 'add recipe' click
     setSelectedRecipeId(newRecipe.id)
-    //set the new state to be to old arr (spreaded out), plus the newRecipe
-    setRecipes([...recipes, newRecipe])
+    setRecipeList([...recipeList, newRecipe])
   }
-
+  /**
+   * ###########
+   * Edit recipe
+   * ###########
+   * - Collect all current recipes and find recipe to update with id.
+   * - Updating the array of recipes with updatedRecipe is setting a new state 
+   * for the recipes array
+   */
   function handleRecipeChange(id, updatedRecipe){
-    const newRecipes  = [...recipes]
-    const index       = newRecipes.findIndex(r => r.id === id) 
-    newRecipes[index] = updatedRecipe
-    setRecipes(newRecipes)
+    const currentRecipeList  = [...recipeList]
+    const index = currentRecipeList.findIndex(r => r.id === id) 
+    currentRecipeList[index] = updatedRecipe
+    setRecipeList(currentRecipeList)
   }
-
+  /**
+   * ######
+   * Delete 
+   * ######
+   * - update the state of the recipe list by filtering out the item to delete
+   * - item is selected based on its id
+   * - update the state of the selected item to undefined
+   */
   function handleRecipeDelete(id) {
     //remove the id from the app
     if(selectedRecipeId !== null && selectedRecipeId === id){
       setSelectedRecipeId(undefined)
     }
-    setRecipes(recipes.filter(recipe => recipe.id !== id))
+    setRecipeList(recipeList.filter(recipe => recipe.id !== id))
   }
-
+  //if no selectedRecipe (undefined), the recipeEdit screen should not be rendered
   return (
     <RecipeContext.Provider value={recipeContextVal}>
-      <RecipeList recipes={recipes} />
+      <RecipeList recipeList={recipeList} />
       {selectedRecipe && <RecipeEdit recipe={selectedRecipe}/>}
     </RecipeContext.Provider>
   )
 }
-
-const sampleRecipes = [
-  {
-    id: 1,
-    name: 'Plain Chicken',
-    servings: 3,
-    cookTime: '1:45',
-    instructions: "1. Put salt on chicken\n2. Put chicken in oven\n3. Eat chicken",
-    ingredients: [
-      {
-        id: 1,
-        name: 'Chicken',
-        amount: '2 Pounds'
-      },
-      {
-        id: 2,
-        name: 'Salt',
-        amount: '1 Tbs'
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Plain Pork',
-    servings: 5,
-    cookTime: '0:45',
-    instructions: "1. Put paprika on pork\n2. Put pork in oven\n3. Eat pork",
-    ingredients: [
-      {
-        id: 1,
-        name: 'Pork',
-        amount: '3 Pounds'
-      },
-      {
-        id: 2,
-        name: 'Paprika',
-        amount: '2 Tbs'
-      }
-    ]
-  }
-]
-
 export default App;
